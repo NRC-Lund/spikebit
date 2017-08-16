@@ -2,11 +2,11 @@
 
 import h5py
 from mpi4py import MPI
-import sbcomm as sbc
+import sbcomm
 import os.path
 
 
-class NMHdf(sbc.Subject):
+class NMHdf(sbcomm.Subject):
     def __init__(self, fileName, fs, nCh, bufSz, nsys=1):
         self.defLength = 1 * 20 * fs  # 15 minutes
         self.fIx = 0

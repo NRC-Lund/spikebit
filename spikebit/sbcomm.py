@@ -6,7 +6,7 @@ from mpi4py import MPI
 import socket
 import struct
 import numpy
-import SocketServer
+import socketserver
 import dbcom
 
 import thread
