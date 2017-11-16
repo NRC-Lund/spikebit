@@ -4,13 +4,11 @@ import numpy as np
 import time
 from mpi4py import MPI
 import socket
-import struct
 import numpy
 import socketserver
-import dbcom
-
-import thread
-import weakref
+import spikebit.dbcom
+import spikebit.observer
+import _thread
 
 
 DETECT_NONE = 1
@@ -50,7 +48,7 @@ class Client(object):
         self.sock.sendall(dataBuf)
 
 
-class SpikebitServer(SocketServer.TCPServer, Observer):
+class SpikebitServer(socketserver.TCPServer, spikebit.observer.Observer):
     defLength = 15 * 60  # 15 min recording
     # TODO change to server forever
 
@@ -88,7 +86,7 @@ class SpikebitServer(SocketServer.TCPServer, Observer):
                 self.detectedEvent = DETECT_NONE
 
 
-class SpikebitTCPHandler(SocketServer.BaseRequestHandler):
+class SpikebitTCPHandler(socketserver.BaseRequestHandler):
     """
     The request handler class for the SpikeBit server.
     It is instantiated once per connection to the server
@@ -127,27 +125,6 @@ class SpikebitTCPHandler(SocketServer.BaseRequestHandler):
 
         def kill_me_please(server):
             server.shutdown()
-        thread.start_new_thread(kill_me_please, (self.server,))
+        _thread.start_new_thread(kill_me_please, (self.server,))
 
 
-class Subject(object):
-    def __init__(self):
-        self._observers = weakref.WeakSet()
-
-    def register_observer(self, observer):
-        self._observers.add(observer)
-
-    def notify_observers(self, msg):
-        for observer in self._observers:
-            observer.notify(self, msg)
-
-
-class Observer(object):
-    def __init__(self):
-        pass
-
-    def start_observing(self, subject):
-        subject.register_observer(self)
-
-    def notify(self, subject, msg):
-        pass

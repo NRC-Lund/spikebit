@@ -2,11 +2,11 @@
 
 import h5py
 from mpi4py import MPI
-import sbcomm
+import spikebit.observer
 import os.path
 
 
-class NMHdf(sbcomm.Subject):
+class NMHdf(spikebit.observer.Observable):
     def __init__(self, fileName, fs, nCh, bufSz, nsys=1):
         self.defLength = 1 * 20 * fs  # 15 minutes
         self.fIx = 0
