@@ -6,14 +6,13 @@ from mpi4py import MPI
 import spikebit.dbcom as sbd
 import spikebit.spikeclient
 import socket
+import datetime as dt
 
 
 def parsecommon(parser):
     """
     Parse common arguments
     """
-    parser.add_argument("--simsz", help="size of simulation",
-                        type=int,  default=0)
     parser.add_argument("--bufsz", help="size of buffer",
                         type=int,  default=20)
     parser.add_argument("--nch", help="Number of channels",
@@ -27,15 +26,17 @@ def parsecommon(parser):
 
 def server():
     """
-    server() - spawns servers as specified
+    server() - spawns servers as determined by parameters
     """
-    parser = argparse.ArgumentParser()
+    nowstr = dt.datetime.strftime(dt.datetime.now(),
+                                  "%Y-%m-%d-%H%M%S") + '.hdf5'
+    parser = argparse.ArgumentParser(description='Spawns spikebit servers')
     parser = parsecommon(parser)
     parser.add_argument("--nsys", help="number of systems",
                         type=int, default=1)
 
     parser.add_argument("--filename", help="file name to use for hdf file",
-                        default='spikebit.hdf5')
+                        default=nowstr)
     args = parser.parse_args()
     sbnm = sbd.SBHdf(args.filename, args.fs, args.nch, args.bufsz,
                      args.nsys)
@@ -48,7 +49,6 @@ def server():
               '--nch={}'.format(args.nch),
               '--bufsz={}'.format(args.bufsz),
               '--filename={}'.format(args.filename),
-              '--simsz={}'.format(args.simsz),
               '--port={}'.format(args.port)],
         maxprocs=args.nsys)
     comm.Disconnect()
@@ -58,10 +58,12 @@ def client():
     """
     client() - connects to a server and checks for eventual mpi comm world
     """
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description='Starts spikebit client')
     parser = parsecommon(parser)
     parser.add_argument("--host", help="host to connect to",
-                        type=str, default='localhost')
+                        default='localhost')
+    parser.add_argument("--simsz", help="size of simulation",
+                        type=int,  default=0)
 
     mpicomm = MPI.COMM_WORLD
     args = parser.parse_args()

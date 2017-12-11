@@ -105,7 +105,6 @@ class SpikebitServer(socketserver.TCPServer, spikebit.observer.Observer):
         self.fs = fs = params["fs"]
         self.nch = nch = params["nch"]
         self.bufsz = bufsz = params["bufsz"]
-        self.simsz = params["simsz"]
         self.filename = filename = params["filename"]
         mpicomm = MPI.Comm.Get_parent()
         self.rank = mpicomm.Get_rank()

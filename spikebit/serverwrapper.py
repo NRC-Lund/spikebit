@@ -13,8 +13,6 @@ def main():
                         type=int)
     parser.add_argument("--bufsz", help="buffer size",
                         type=int, default=20)
-    parser.add_argument("--simsz", help="simulation size",
-                        type=int, default=10)
     parser.add_argument("--filename", help="filename",
                         type=str, default='spikebit.hdf5')
     parser.add_argument("--port", help="port to connect to",
@@ -24,7 +22,7 @@ def main():
     rank = mpicomm.Get_rank()
     host, port = "localhost", args.port + rank
     params = {"fs": args.fs, "nch": args.nch, "bufsz": args.bufsz,
-              "simsz": args.simsz, "filename": args.filename}
+              "filename": args.filename}
     # Create the server
     print("Starting the server")
     sbs = spiksbc.SpikebitServer((host, port),

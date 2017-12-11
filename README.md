@@ -1,5 +1,5 @@
 # SpikeBit compression
-SpikeBit is an architecture for integrating multiple massive parallel recordings of spiketrains using high-speed Ethernet.
+SpikeBit is an architecture and data format for integrating multiple massive parallel recordings of spiketrains using high-speed Ethernet. For more information see article published in [TBD]
 
 ## Install
 1. See dependencies below
@@ -15,16 +15,14 @@ For client, run: `$ spikebit-client`
 * --bufsz - message window lenth (20 recommended, default)
 * --fs - bin sampling frequency (default 1000)
 * --port - port to connect to on server/sport listening on server (default 29170)
-* --simsz - size of simulation, number of complete messages to send (default 100)
 
 ### Client arguments:
 * --host - server to connect to (default localhost)
+* --simsz - size of simulation, number of complete messages to send (default 100)
 
 ### Server arguments:
-* --nsys - number of clients to connect to
-* --filename - filename to use for hdf5 file
-
-### Filename
+* --nsys - number of clients to connect to (default 1 system)
+* --filename - filename to use for hdf5 file (default set to current datetime in format %Y-%m-%d-%H%M%S.hdf5)
 
 ## Hardware configuration
 - CPU(s) with support for as many threads (that is, total number of cores) as acquisition systems that are connected to is strongly recommended. 
