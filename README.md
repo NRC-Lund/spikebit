@@ -1,5 +1,5 @@
 # SpikeBit compression
-SpikeBit is an architecture and data format for integrating multiple massive parallel recordings of spiketrains using high-speed Ethernet. For more information see article published in [TBD]
+SpikeBit is an architecture and data format for integrating multiple massive parallel recordings of spiketrains using high-speed Ethernet. For more information, see article published in [TBD]
 
 ## Install
 1. See dependencies below
@@ -8,7 +8,7 @@ SpikeBit is an architecture and data format for integrating multiple massive par
 
 ## Usage
 For server, run: `$ spikebit-server`
-For client, run: `$ spikebit-client`
+For client, run: `$ spikebit-client`. For testing out multiple clients for testing purposes, it is convenient to use `mpiexec`: `$ mpiexec -n x spikebit-client`, where x is the number of parallell clients to run. 
 
 ### Common arguments: 
 * --nch - number of channels (default 1000)
