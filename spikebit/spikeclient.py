@@ -5,65 +5,58 @@ Created on Tue Jun 27 00:27:35 2017
 """
 
 import spikebit.sbcomm
-import numpy as np
-import time
+import spikebit.simrun
 
 
-class spikeclient(object):
+class Spikeclient(object):
     """
-    A client Mediator superclass for forwarding acquisition system data to 
-    Spikebit Server. 
-    
+    A client Mediator superclass for forwarding acquisition system data to
+    Spikebit Server.
     """
-    
-    def __init__(self,  acqhost,  spikebithost):
+
+    def __init__(self,  acqhost,  spikebithost, params):
+        """ Constructor method
+        """
         self.acqhost = acqhost
         self.acqisconnected = False
         self.spikebithost = spikebithost
-        self.nch=128
-        self.bufSz=20
+        self.nch = params["nch"]
+        self.bufsz = params["bufsz"]
+        self.port = params["port"]
+        self.simsz = params["simsz"]
+        self.fs = params["fs"]
 
     def acqconnect(self):
-        """
-        Connect to the specific acquisition system using its API to define 
+        """ Connect to the specific acquisition system using its API to define
         callback
         """
         self.acqisconnected = True
-        
+
     def acqreceive(self, D):
         """
         Should implement the callback method from the acquisition system
-        alternatively polling from main thread 
+        alternatively polling from main thread
         """
-        
         pass
-    
+
     def spikebitconnect(self):
-        self.sbc=sbcomm.Client(self.nCh,self.bufSz)
-        self.sbc.connect(self.sbikebithost,port)
-
-   # cpdef main(self, **kwargs):
-    #    self.acqconnect()
-     #   pass
+        self.sbc = spikebit.sbcomm.Client(self.nCh, self.bufSz)
+        self.sbc.connect(self.sbikebithost, self.port)
 
 
-class simclient(spikeclient):
+class Simclient(Spikeclient):
     """
     Client which does not have a real aquisition system
     """
-    def __init__(self, acqhost,  spikebithost):
-        super.__init__(acqhost, spikebithost)
-
+    def __init__(self, acqhost,  spikebithost, params):
+        super().__init__(acqhost, spikebithost, params)
 
     def acqconnect(self):
-        
         super.acqconnect()
-    
+
     def acqreceive(self, D):
         pass
-        
 
-    
-
-    def main(self, nCh, simSz, bufSz, fs, port):
-        simrun.runsim(nCh, simSz, bufSz, fs, port)
+    def main(self):
+        spikebit.simrun.runsim(self.nch, self.simsz, self.bufsz, self.fs,
+                               self.spikebithost, self.port)

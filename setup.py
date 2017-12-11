@@ -5,31 +5,34 @@
 """
 from setuptools import setup, find_packages
 from setuptools.extension import Extension
-from Cython.Distutils import build_ext
+from Cython.Build import cythonize
 import numpy
 
-extensions = [Extension("spikebit.encoder", ["spikebit/encoder.pyx"]),
-                Extension("spikebit.patterncheck",
-                          ["spikebit/patterncheck.pyx"]),
-                Extension("spikebit.simrun",
-                          ["spikebit/simrun.pyx"])]
+extensions = [Extension("spikebit.encoder", ["spikebit/encoder.pyx"],
+                        include_dirs=[numpy.get_include()]),
+              Extension("spikebit.patterncheck",
+                        ["spikebit/patterncheck.pyx"],
+                        include_dirs=[numpy.get_include()]),
+              Extension("spikebit.simrun",
+                        ["spikebit/simrun.pyx"],
+                        include_dirs=[numpy.get_include()])]
 
 setup(name='spikebit',
       description='Electrophysiology data integration',
-      version='0.7',
-      install_requires=['mpi4py>=3.0','Cython>=0.27','numpy>=1.13',
-      'h5py>=2.7'],
+      version='0.21',
+      install_requires=['mpi4py>=3.0', 'Cython>=0.27', 'numpy>=1.13',
+                        'h5py>=2.7'],
       author='Bengt Ljungquist',
-      authour_email='bengt@ljungquist.info',
+      author_email='bengt@ljungquist.info',
       py_modules=['spikebit'],
       platforms='linux',
-      packages= find_packages(exclude=['test']),
+      packages=find_packages(exclude=['test']),
       license='MIT',
-      cmdclass={'build_ext': build_ext},
-      ext_modules=extensions,
+      ext_modules=cythonize(extensions),
       include_dirs=[numpy.get_include()],
       entry_points={
         'console_scripts':
             ['spikebit-server=spikebit.command_line:server',
-            'spikebit-client=spikebit.command_line:client'],
+             'spikebit-singleserver=spikebit.serverwrapper:main',
+             'spikebit-client=spikebit.command_line:client'],
             })

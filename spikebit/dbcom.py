@@ -2,11 +2,11 @@
 
 import h5py
 from mpi4py import MPI
-import spikebit.observer
+import spikebit.observer as sbo
 import os.path
 
 
-class NMHdf(spikebit.observer.Observable):
+class SBHdf(sbo.Observable):
     def __init__(self, fileName, fs, nCh, bufSz, nsys=1):
         self.defLength = 1 * 20 * fs  # 15 minutes
         self.fIx = 0
@@ -21,28 +21,26 @@ class NMHdf(spikebit.observer.Observable):
                 r = self.f.create_group("sess{}".format(iSys))
                 r.create_dataset("speedData", (1, 10000))
                 r.create_dataset("timeData", (1, 10000))
-                r.create_dataset("ePhysData", (self.defLength, nCh))
+                r.create_dataset("ePhysData", (self.defLength, nCh),
+                                 dtype='uint32')
         else:
             self.f = h5py.File(fileName, 'a', driver='mpio',
                                comm=MPI.COMM_WORLD)
         mpicomm = MPI.COMM_WORLD
         # print(mpicomm)
-        commSz = mpicomm.Get_size()
+        self.commSz = mpicomm.Get_size()
         self.rank = mpicomm.Get_rank()
-        super(NMHdf, self).__init__()
+        super(SBHdf, self).__init__()
 
     def writeData(self, D):
-        fKeys = self.f.keys()
-        # print "Fkeys:{}".format(fKeys)
         rg = self.f["sess{}".format(self.rank)]
-        # print "writing to sess{}".format(self.rank)
         r = rg["ePhysData"]
         stepL = D.shape[0]
         r[self.fIx:(self.fIx+stepL), :] = D
         self.fIx += stepL
         # print self.fIx
         self.lastData = D
-        self.notify_observers(sbc.DATA_RECEIVED)
+        self.notify_observers(sbo.DATA_RECEIVED)
 
     def writeSpeed(self, tRate):
         rg = self.f["sess{}".format(self.rank)]

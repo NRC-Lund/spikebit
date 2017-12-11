@@ -5,6 +5,7 @@ Implementation of client observer
 @author: bengt
 """
 import weakref
+DATA_RECEIVED = 1
 
 
 class Observable(object):

@@ -8,7 +8,7 @@ cimport numpy as np
 import scipy.sparse as scs
 
 
-def bitEncode(np.ndarray spikeTimes, np.ndarray neuronIds, int firstTime,
+cpdef bitEncode(np.ndarray spikeTimes, np.ndarray neuronIds, int firstTime,
            int nNeurons, int winSize):              
     """
     Takes arrays of spikeTimes (1xn must be from onset of window in ms) 
