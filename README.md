@@ -1,10 +1,13 @@
-# SpikeBit compression
+# SpikeBit
 SpikeBit is an architecture and data format for integrating multiple massive parallel recordings of spiketrains using high-speed Ethernet. For more information, see article published in [TBD]
 
 ## Install
-1. See dependencies below
-2. Run: `$ python3 setup.py build_ext`
-3. Run: `$ python3 setup.py install` (will download missing python packages if pip is installed)
+1. Hdf5 needs to be installed with support for parallel writing and reading, using mpi, which also need to be installed. It is also recommended to install pip package manager for python3. Options:
+   1. Compile from source, see [parallel hdf5 documentation](https://support.hdfgroup.org/HDF5/PHDF5/) 
+   2. Install package using apt: `$sudo openmpi-bin openmpi-doc libopenmpi-dev libhdf5-openmpi-dev python3-pip`
+2. Clone using git: `$ git clone  
+3. Run: `$ python3 setup.py build_ext`
+4. Run: `$ python3 setup.py install` (will download missing python packages if pip is installed)
 
 ## Usage
 For server, run: `$ spikebit-server`
