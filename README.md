@@ -1,5 +1,5 @@
 # SpikeBit
-SpikeBit is an architecture and data format for integrating multiple massive parallel recordings of spiketrains using high-speed Ethernet. For more information, see article published in [TBD]
+SpikeBit is an architecture and data format for integrating multiple massive parallel recordings of spiketrains using high-speed Ethernet. For more information, see the [Wiki](https://github.com/NRC-Lund/spikebit/wiki)
 
 ## Install
 1. Hdf5 needs to be installed with support for parallel writing and reading, using mpi, which also need to be installed. It is also recommended to install pip package manager for python3. Options:
