@@ -1,10 +1,16 @@
-# SpikeBit compression
+# SpikeBit
 SpikeBit is an architecture and data format for integrating multiple massive parallel recordings of spiketrains using high-speed Ethernet. For more information, see article published in [TBD]
 
 ## Install
-1. See dependencies below
-2. Run: `$ python3 setup.py build_ext`
-3. Run: `$ python3 setup.py install` (will download missing python packages if pip is installed)
+1. Hdf5 needs to be installed with support for parallel writing and reading, using mpi, which also need to be installed. It is also recommended to install pip package manager for python3. Options:
+   1. Compile from source, see [parallel hdf5 documentation](https://support.hdfgroup.org/HDF5/PHDF5/) 
+   2. Install package using apt: `$sudo apt-get install openmpi-bin libopenmpi-dev libhdf5-openmpi-dev python3-pip build-essential gfortran libatlas-base-dev python3-dev`
+2. Install numpy, Cython and mpi4py python packages using pip package manager: `pip3 install Cython scipy mpi4py numpy`
+3. Clone the h5py library using git: `$ git clone https://github.com/h5py/h5py.git`
+4. Build h5py with support for [parallell hdf5](http://docs.h5py.org/en/latest/mpi.html#building-against-parallel-hdf5)
+5. Clone spikebit using git: `$ git clone https://github.com/NRC-Lund/spikebit.git`
+6. Build using the setup script: `$ python3 setup.py build_ext`
+7. Install the python "egg": `$ python3 setup.py install`
 
 ## Usage
 For server, run: `$ spikebit-server`
@@ -30,7 +36,7 @@ For client, run: `$ spikebit-client`. For testing out multiple clients for testi
 - GbE or if possible 10GbE as Ethernet medium is highly recommended.
 
 ## Dependencies (in order of suggested installation order)
-- Linux/OS - SpikeBit is tested on Ubuntu 16.04 but most distributions would probably do. The following packages need to be installed using apt package manager: `openmpi-bin openmpi-doc libopenmpi-dev` 
+- Linux/OS - SpikeBit is tested on Ubuntu 16.04 but most distributions would probably do.
 - MPI - our solution has run using openmpi 1.10.2, but in general other mpi implementations such as mpich would probably be fine. 
-- hdf5 -  We have tested using hdf version 1.8.16 You may either install package `libhdf5-openmpi-dev` or  be compiled and installed  from source using the following options. Compilation is made with the following option: `$./configure --enable-parallel --enable-shared`
-- Python3 - we have developed and tested SpikeBit using python 3.5.2. The following packages needs to be installed using `pip`: `numpy mpi4py cython python-lzf`. h5py needs to be compiled and installed separately with [mpi support](http://docs.h5py.org/en/latest/mpi.html#building-against-parallel-hdf5)
+- hdf5 -  We have tested using hdf version 1.8.16 
+- Python3 - we have developed and tested SpikeBit using python 3.5.2.
