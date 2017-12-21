@@ -17,8 +17,8 @@ For server, run: `$ spikebit-server`
 For client, run: `$ spikebit-client`. For testing out multiple clients for testing purposes, it is convenient to use `mpiexec`: `$ mpiexec -n x spikebit-client`, where x is the number of parallell clients to run. 
 
 ### Common arguments: 
-* --nch - number of channels (default 1000)
-* --bufsz - message window lenth (20 recommended, default)
+* --nch - number of neurons (per system, default 1000)
+* --bufsz - message window length (20 recommended, default)
 * --fs - bin sampling frequency (default 1000)
 * --port - port to connect to on server/sport listening on server (default 29170)
 
