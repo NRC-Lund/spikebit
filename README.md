@@ -2,15 +2,16 @@
 SpikeBit is an architecture and data format for integrating multiple massive parallel recordings of spiketrains using high-speed Ethernet. For more information, see the [Wiki](https://github.com/NRC-Lund/spikebit/wiki)
 
 ## Install
-1. Hdf5 needs to be installed with support for parallel writing and reading, using mpi, which also need to be installed. It is also recommended to install pip package manager for python3. Options:
+1. Hdf5 needs to be installed with support for parallel writing and reading, using mpi, which also need to be installed. It is also recommended to install pip package manager for python3. Options (either of):
    1. Compile from source, see [parallel hdf5 documentation](https://support.hdfgroup.org/HDF5/PHDF5/) 
-   2. Install package using apt: `$sudo apt-get install openmpi-bin libopenmpi-dev libhdf5-openmpi-dev python3-pip build-essential gfortran libatlas-base-dev python3-dev`
-2. Install numpy, Cython and mpi4py python packages using pip package manager: `pip3 install Cython scipy mpi4py numpy`
+   2. Install package using apt: `$ sudo apt-get install openmpi-bin libopenmpi-dev libhdf5-openmpi-dev python3-pip build-essential gfortran libatlas-base-dev python3-dev`
+2. Install numpy, Cython and mpi4py python packages using pip package manager: `$ sudo pip3 install Cython scipy mpi4py numpy`
 3. Clone the h5py library using git: `$ git clone https://github.com/h5py/h5py.git`
-4. Build h5py with support for [parallell hdf5](http://docs.h5py.org/en/latest/mpi.html#building-against-parallel-hdf5)
-5. Clone spikebit using git: `$ git clone https://github.com/NRC-Lund/spikebit.git`
-6. Build using the setup script: `$ python3 setup.py build_ext`
-7. Install the python "egg": `$ python3 setup.py install`
+4. Change directory to h5py `$cd h5py` and build h5py with support for [parallell hdf5](http://docs.h5py.org/en/latest/mpi.html#building-against-parallel-hdf5)
+5. Install h5py `sudo python3 setup.py install`
+6. Clone spikebit using git: `$ git clone https://github.com/NRC-Lund/spikebit.git`
+7. Change directory to spikebit `$ cd spikebit`. Build using the setup script: `$ python3 setup.py build_ext`
+8. Install the python "egg": `$ sudo python3 setup.py install`.
 
 ## Usage
 For server, run: `$ spikebit-server`
