@@ -8,10 +8,10 @@ Spikebit is an architecture and data format for integrating multiple massive rec
 2. Install numpy, Cython and mpi4py python packages using pip package manager: `$ sudo pip3 install Cython scipy mpi4py numpy`
 3. Clone the h5py library using git: `$ git clone https://github.com/h5py/h5py.git`
 4. Change directory to h5py `$ cd h5py` and install h5py with support for parallel hdf5:
-   1. Set default compiler to mpi compiler: `$ CC=mpicc`
-   2. Configure for MPI support: `$ python setup.py configure --mpi`
-   3. Build h5py: `$ python setup.py build`
-   4. Install h5py `$ sudo python3 setup.py install`
+   1. Set default compiler to mpi compiler: `$ CC=mpicc`
+   2. Configure for MPI support: `$ python setup.py configure --mpi`
+   3. Build h5py: `$ python setup.py build`
+   4. Install h5py `$ sudo python3 setup.py install`
 5. Clone spikebit using git: `$ git clone https://github.com/NRC-Lund/spikebit.git`
 6. Change directory to spikebit `$ cd spikebit`. Build using the setup script: `$ python3 setup.py build_ext`
 7. Install the python "egg": `$ sudo python3 setup.py install`.
