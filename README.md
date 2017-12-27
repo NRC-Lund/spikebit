@@ -1,21 +1,25 @@
-# SpikeBit
-SpikeBit is an architecture and data format for integrating multiple massive parallel recordings of spiketrains using high-speed Ethernet. For more information, see the [Wiki](https://github.com/NRC-Lund/spikebit/wiki)
+# Spikebit
+Spikebit is an architecture and data format for integrating multiple massive recordings of spiketrains using high-speed Ethernet. For more information, see the [spikebit wiki](https://github.com/NRC-Lund/spikebit/wiki)
 
 ## Install
 1. Hdf5 needs to be installed with support for parallel writing and reading, using mpi, which also need to be installed. It is also recommended to install pip package manager for python3. Options (either of):
-   1. Compile from source, see [parallel hdf5 documentation](https://support.hdfgroup.org/HDF5/PHDF5/) 
-   2. Install package using apt: `$ sudo apt-get install openmpi-bin libopenmpi-dev libhdf5-openmpi-dev python3-pip build-essential gfortran libatlas-base-dev python3-dev`
+   1. (Recommended) Install packages using apt: `$ sudo apt-get install openmpi-bin libopenmpi-dev libhdf5-openmpi-dev python3-pip build-essential gfortran libatlas-base-dev python3-dev`
+   2. Compile from source, see [parallel hdf5 documentation](https://support.hdfgroup.org/HDF5/PHDF5/) 
 2. Install numpy, Cython and mpi4py python packages using pip package manager: `$ sudo pip3 install Cython scipy mpi4py numpy`
 3. Clone the h5py library using git: `$ git clone https://github.com/h5py/h5py.git`
-4. Change directory to h5py `$cd h5py` and build h5py with support for [parallell hdf5](http://docs.h5py.org/en/latest/mpi.html#building-against-parallel-hdf5)
-5. Install h5py `sudo python3 setup.py install`
-6. Clone spikebit using git: `$ git clone https://github.com/NRC-Lund/spikebit.git`
-7. Change directory to spikebit `$ cd spikebit`. Build using the setup script: `$ python3 setup.py build_ext`
-8. Install the python "egg": `$ sudo python3 setup.py install`.
+4. Change directory to h5py `$ cd h5py` and install h5py with support for parallel hdf5:
+   1. Set default compiler to mpi compiler: `$ CC=mpicc`
+   2. Configure for MPI support: `$ python setup.py configure --mpi`
+   3. Build h5py: `$ python setup.py build`
+   4. Install h5py `$ sudo python3 setup.py install`
+5. Clone spikebit using git: `$ git clone https://github.com/NRC-Lund/spikebit.git`
+6. Change directory to spikebit `$ cd spikebit`. Build using the setup script: `$ python3 setup.py build_ext`
+7. Install the python "egg": `$ sudo python3 setup.py install`.
 
 ## Usage
+For a minimal working example simulation of parallel recording sessions, please see the [simulation scenario](https://github.com/NRC-Lund/spikebit/wiki/Simulation-scenario) in the spikebit wiki. 
 For server, run: `$ spikebit-server`
-For client, run: `$ spikebit-client`. For testing out multiple clients for testing purposes, it is convenient to use `mpiexec`: `$ mpiexec -n x spikebit-client`, where x is the number of parallell clients to run. 
+For client, run: `$ spikebit-client`. For testing out multiple clients for testing purposes, it is convenient to use `mpiexec`: `$ mpiexec -n x spikebit-client`, where x is the number of parallel clients to run. 
 
 ### Common arguments: 
 * --nch - number of neurons (per system, default 1000)
@@ -33,7 +37,7 @@ For client, run: `$ spikebit-client`. For testing out multiple clients for testi
 
 ## Hardware configuration
 - CPU(s) with support for as many threads (that is, total number of cores) as acquisition systems that are connected to is strongly recommended. 
-- Please consider high performance storage device for data files, such as solid stated drive(s). If recording over longer periods of time, please also consider performance capacity. 
+- Please consider high performance storage device for data files, such as solid stated drive(s). If recording/simulating over longer periods of time, please also consider performance capacity. 
 - GbE or if possible 10GbE as Ethernet medium is highly recommended.
 
 ## Dependencies (in order of suggested installation order)
