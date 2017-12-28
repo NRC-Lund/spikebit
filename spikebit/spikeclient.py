@@ -32,7 +32,7 @@ class Spikeclient(object):
         """
         self.acqisconnected = True
 
-    def acqreceive(self, D):
+    def acqreceive(self, data):
         """
         Should implement the callback method from the acquisition system
         alternatively polling from main thread
@@ -40,7 +40,7 @@ class Spikeclient(object):
         pass
 
     def spikebitconnect(self):
-        self.sbc = spikebit.sbcomm.Client(self.nCh, self.bufSz)
+        self.sbc = spikebit.sbcomm.Client(self.nCh, self.bufsz)
         self.sbc.connect(self.sbikebithost, self.port)
 
 
@@ -54,7 +54,7 @@ class Simclient(Spikeclient):
     def acqconnect(self):
         super.acqconnect()
 
-    def acqreceive(self, D):
+    def acqreceive(self, data):
         pass
 
     def main(self):

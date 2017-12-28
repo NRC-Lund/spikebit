@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import h5py
 from mpi4py import MPI
@@ -7,61 +7,63 @@ import os.path
 
 
 class SBHdf(sbo.Observable):
-    def __init__(self, fileName, fs, nCh, bufSz, nsys=1):
-        self.defLength = 1 * 20 * fs  # 15 minutes
+    def __init__(self, file_name, fs, nCh, bufsz, nsys=1):
+        self.file_length = 1 * 60 * fs  # 60 s to start with
         self.fIx = 0
         self.sIx = 0
         self.tIx = 0
-        self.lastData = None
-        self.bufSz = bufSz
-        if not os.path.isfile(fileName):
-            self.f = h5py.File(fileName, 'a', driver='mpio',
+        self.last_data = None
+        self.bufsz = bufsz
+        if not os.path.isfile(file_name):
+            self.f = h5py.File(file_name, 'a', driver='mpio',
                                comm=MPI.COMM_WORLD)
-            for iSys in range(0, nsys):
-                r = self.f.create_group("sess{}".format(iSys))
+            for i_sys in range(0, nsys):
+                r = self.f.create_group("session{}".format(i_sys))
                 r.create_dataset("speedData", (1, 10000))
                 r.create_dataset("timeData", (1, 10000))
-                r.create_dataset("ePhysData", (self.defLength, nCh),
+                r.create_dataset("ePhysData", (nCh, self.file_length),
                                  dtype='uint32')
         else:
-            self.f = h5py.File(fileName, 'a', driver='mpio',
+            self.f = h5py.File(file_name, 'a', driver='mpio',
                                comm=MPI.COMM_WORLD)
         mpicomm = MPI.COMM_WORLD
         # print(mpicomm)
-        self.commSz = mpicomm.Get_size()
+        self.comm_sz = mpicomm.Get_size()
         self.rank = mpicomm.Get_rank()
         super(SBHdf, self).__init__()
 
-    def writeData(self, D):
-        rg = self.f["sess{}".format(self.rank)]
+    def write_data(self, data):
+        rg = self.f["session{}".format(self.rank)]
         r = rg["ePhysData"]
-        stepL = D.shape[0]
-        r[self.fIx:(self.fIx+stepL), :] = D
-        self.fIx += stepL
+        step_size = data.shape[1]
+        print("Stepping: {}".format(step_size))
+        r[:, self.fIx:(self.fIx+step_size)] = data
+        print("Wrote data")
+        self.fIx += step_size
         # print self.fIx
-        self.lastData = D
+        self.last_data = data
         self.notify_observers(sbo.DATA_RECEIVED)
 
-    def writeSpeed(self, tRate):
-        rg = self.f["sess{}".format(self.rank)]
+    def write_speed(self, speed):
+        rg = self.f["session{}".format(self.rank)]
         q = rg["speedData"]
-        q[0, self.sIx] = tRate
+        q[0, self.sIx] = speed
         self.sIx += 1
 
-    def writeTime(self, theTime):
-        rg = self.f["sess{}".format(self.rank)]
+    def write_time(self, the_time):
+        rg = self.f["session{}".format(self.rank)]
         q = rg["timeData"]
-        q[0, self.tIx] = theTime
+        q[0, self.tIx] = the_time
         self.tIx += 1
 
-    def writeAnalysisTime(self, tRate):
-        rg = self.f["sess{}".format(self.rank)]
-        q = rg["Data"]
-        q[0, self.sIx] = tRate
-        self.sIx += 1
+    # def write_analysis_time(self, atime):
+    #     rg = self.f["session{}".format(self.rank)]
+    #     q = rg["Data"]
+    #     q[0, self.sIx] = atime
+    #     self.sIx += 1
 
-    def readlastData(self):
-        return self.lastData
+    def read_last_data(self):
+        return self.last_data
 
     def close(self):
         self.f.flush()

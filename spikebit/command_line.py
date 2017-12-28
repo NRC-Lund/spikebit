@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import argparse
 
@@ -15,9 +15,9 @@ def parsecommon(parser):
     """
     parser.add_argument("--bufsz", help="size of buffer",
                         type=int,  default=20)
-    parser.add_argument("--nch", help="Number of channels",
+    parser.add_argument("--nch", help="Number of cells",
                         type=int, default=1000)
-    parser.add_argument("--fs", help="sampling frequency",
+    parser.add_argument("--fs", help="spike sampling rate",
                         type=int, default=1000)
     parser.add_argument("--port", help="port to connect to",
                         type=int, default=29170)

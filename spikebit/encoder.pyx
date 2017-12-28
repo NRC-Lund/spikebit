@@ -8,45 +8,50 @@ cimport numpy as np
 import scipy.sparse as scs
 
 
-cpdef bitEncode(np.ndarray spikeTimes, np.ndarray neuronIds, int firstTime,
-           int nNeurons, int winSize):              
+cpdef bit_encode(np.ndarray spike_times, np.ndarray neuron_ids,
+           int n_neurons, int win_size):              
     """
-    Takes arrays of spikeTimes (1xn must be from onset of window in ms) 
-    neuronIDs (1xn), number of neurons   as input and creates 
-    bitencoded grid of size (n/32)
+    Creates bitencoded grid
+    
+    Args:    
+        spike_times: numpy array 1 x n, must be from onset of window in ms 
+        neuron_ids: numpy array 1 x n, ids of neurons of the spike times
+        n_neurons:  total number of neurons   
+    
+    Returns:
+        A numpy array of bitencoded data of size win_size x n_neurons/32
     """
-    nSpikes = len(spikeTimes)
+    nspikes = len(spike_times)
     
     # Create a vector of spikes of same 
-    # size as spiketimes vector
-    spikes = np.ones((1, nSpikes), np.uint8).flatten()
-    intSpTimes = (spikeTimes).astype(np.uint8)
+    # size as spike_times vector
+    spikes = np.ones((1, nspikes), np.uint8).flatten()
+    int_sp_times = (spike_times).astype(np.uint8)
     # Use vectors to create sparse matrix
-    spikeMat = scs.csc_matrix((spikes, (neuronIds, intSpTimes)),
-                                  shape=(nNeurons, winSize), 
+    spike_mat = scs.csc_matrix((spikes, (neuron_ids, int_sp_times)),
+                                  shape=(n_neurons, win_size), 
                                 dtype=np.int8).toarray()
-    spikeMat=spikeMat.astype(np.bool).astype(np.int)
+    spike_mat=spike_mat.astype(np.bool).astype(np.int)
                                  
     # Pad with zeros to get a number of rows
     # divisable by 32
-    toPad = nNeurons % 32
-    if toPad != 0:
-        padding = 32-toPad
-        spikeMat = np.lib.pad(spikeMat,((0,toPad),(0,0)), "constant", 
+    to_pad = n_neurons % 32
+    if to_pad != 0:
+        padding = 32-to_pad
+        spike_mat = np.lib.pad(spike_mat, ((0,to_pad),(0,0)), "constant", 
                               constant_values=0)    
-    # TODO is this doing the right thing?
     # Calculated number of 32-bit integers nneded
-    nIntegers = spikeMat.shape[0] // 32
-    if toPad > 0:
+    n_ints = spike_mat.shape[0] // 32
+    if to_pad > 0:
     #Increase number of integers with 1
-        nIntegers += 1
+        n_ints += 1
       
-    # Reshape matrix to nIntegers x winSize x 32
-    spikeMat=np.reshape(spikeMat,(nIntegers,winSize,32))
+    # Reshape matrix to n_ints x win_size x 32
+    spike_mat=np.reshape(spike_mat, (n_ints, win_size, 32))
     # create bitvector (1,2,4, ... ,2**31)
     bit32 = 2**np.arange(32)
-    # multiply matrices (spikeMat X bit32) to get bit encoding 
-    bitEncodedData = spikeMat.dot(np.transpose(bit32))
-    return bitEncodedData
+    # multiply matrices (spike_mat X bit32) to get bit encoding 
+    bit_encoded_data = spike_mat.dot(np.transpose(bit32))
+    return bit_encoded_data
     
     

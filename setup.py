@@ -19,7 +19,7 @@ extensions = [Extension("spikebit.encoder", ["spikebit/encoder.pyx"],
 
 setup(name='spikebit',
       description='Electrophysiology data integration',
-      version='0.21',
+      version='0.23',
       install_requires=['mpi4py>=3.0', 'Cython>=0.27', 'numpy>=1.13',
                         'h5py>=2.7'],
       author='Bengt Ljungquist',

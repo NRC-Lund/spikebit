@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import numpy as np
 import time
@@ -25,7 +25,7 @@ class Client(object):
         self.bfsz = bfsz
 
     def connect(self, hostname, port):
-        """ connect (hostname,port)  - connect to server port at host hostname
+        """ connect(hostname,port)  - connect to server port at host hostname
         """
         print("Connecting to server...")
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -42,55 +42,64 @@ class Client(object):
             self.sock = []
             self.isConnected = False
 
-    def sendData(self, sD):
-        """sendData(sD) -- writes samples that must be given as a numpy array,
-        windowsize x channels.
+    def send_data(self, s_data):
+        """sends data to server
+        
+        args:
+            s_data: windowsize x channels numpy array
         """
-        if not(isinstance(sD, numpy.ndarray)) or len(sD.shape) != 2:
-            raise ValueError('Data should numpy array: winsize x channels)')
+        if not(isinstance(s_data, numpy.ndarray)) or len(s_data.shape) != 2:
+            raise ValueError('Data should be numpy array: winsize x channels)')
         if not(self.isConnected):
             raise IOError('Not connected to SpikeBit server')
-        self.sock.sendall(sD.data)  # send numpy internal memory buffer
+        self.sock.sendall(s_data.data)  # send numpy internal memory buffer
 
 
 class SpikebitTCPHandler(socketserver.StreamRequestHandler):
+    """class defining the request handler used by the SpikebitServer class
+    """
     def handle(self):
+        """ method called when request received by server
+        """
         print('Handling')
         t1 = time.clock()
         data = b''  # Init data to empty binary string
-        expectLen = self.server.nch*self.server.bufsz*4
+        expect_len = self.server.nch*self.server.bufsz*4
         # while True:
-        breakNext = False
+        break_next = False
         while True:
             try:
-                while len(data) < expectLen:
-                    thisData = self.request.recv(expectLen-len(data))
-                    if not thisData:
+                while len(data) < expect_len:
+                    this_data = self.request.recv(expect_len-len(data))
+                    if not this_data:
                         break  # No more data received - breaking
                     else:
-                        data += thisData
-                if (len(data) == 0) & breakNext:
+                        data += this_data
+                if (len(data) == 0) & break_next:
                     break
                 elif len(data) == 0:
-                    breakNext = True
+                    break_next = True
                     continue
                 else:
-                    breakNext = False
-                D = np.ndarray(shape=(self.server.bufsz, self.server.nch),
-                               dtype=np.uint32, buffer=data)
-                self.server.dbc.writeData(D)
+                    break_next = False
+                np_data = np.ndarray(shape=(self.server.nch, self.server.bufsz),
+                                  dtype=np.uint32, buffer=data)
+                self.server.dbc.write_data(np_data)
                 data = b''
                 t2 = time.clock()
-                tDelta = t2 - t1
-                tRate = D.size * 32 / (tDelta)  # Writing 32 bits
-                self.server.dbc.writeSpeed(tRate)
-                self.server.dbc.writeTime(t2)
+                t_delta = t2 - t1
+                speed = np_data.size * 32 / (t_delta)  # Writing 32 bits
+                self.server.dbc.write_speed(speed)
+                self.server.dbc.write_time(t2)
                 t1 = time.clock()
             except Exception as e:
                 print(e)
                 raise e
 
         def kill_me_please(server):
+            """ function called to shutdown the server
+            by starting a new thread
+            """
             server.shutdown()
         _thread.start_new_thread(kill_me_please, (self.server,))
 
@@ -105,15 +114,21 @@ class SpikebitServer(socketserver.TCPServer, spikebit.observer.Observer):
         self.fs = fs = params["fs"]
         self.nch = nch = params["nch"]
         self.bufsz = bufsz = params["bufsz"]
-        self.filename = filename = params["filename"]
+        self.file_name = file_name = params["file_name"]
         mpicomm = MPI.Comm.Get_parent()
         self.rank = mpicomm.Get_rank()
-        self.dbc = spikebit.dbcom.SBHdf(filename, fs, nch, bufsz)
-        self.detectedEvent = DETECT_NONE
+        self.dbc = spikebit.dbcom.SBHdf(file_name, fs, nch, bufsz)
+        self.detected_event = DETECT_NONE
         self.start_observing(self.dbc)
-        self.doEval = True  # Do evaluation
+        self.do_eval = True  # Do evaluation
 
-    def handleerror(request, client_address):
+    def handleerror(self, request, client_address):
+        """ called when error in connection to client
+
+        args:
+            request: the current request
+            client_address: the client address for which error is received
+        """
         print("Client {} disconnected".format(client_address))
         super(request, client_address)
 
@@ -121,14 +136,17 @@ class SpikebitServer(socketserver.TCPServer, spikebit.observer.Observer):
         self.dbc.f.close()
 
     def notify(self, subject, msg):
-        """ notify(subject, msg) - called by observed subject with message msg
+        """ called by observed subject with message msg
+
+        args:
+            msg: message to send to observers, as defined by constant with
+            prefix detect.
         """
-        D = self.dbc.readlastData()
-        if self.doEval:
-            Dmean = np.mean(D, 1)
+        data = self.dbc.read_last_data()
+        if self.do_eval:
+            Dmean = np.mean(data, 1)
             # change to select which events to listen for
             if Dmean[0] > self.nch:
-                self.detectedEvent = DETECT_THRESHOLD
+                self.detected_event = DETECT_THRESHOLD
             else:
-                self.detectedEvent = DETECT_NONE
-
+                self.detected_event = DETECT_NONE

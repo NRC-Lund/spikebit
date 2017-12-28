@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import argparse
 from mpi4py import MPI
 import spikebit.sbcomm as spiksbc
@@ -22,7 +22,7 @@ def main():
     rank = mpicomm.Get_rank()
     host, port = "localhost", args.port + rank
     params = {"fs": args.fs, "nch": args.nch, "bufsz": args.bufsz,
-              "filename": args.filename}
+              "file_name": args.filename}
     # Create the server
     print("Starting the server")
     sbs = spiksbc.SpikebitServer((host, port),
