@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+"""
+@author: Bengt Ljungquist
+"""
+
 import argparse
 from mpi4py import MPI
 import spikebit.sbcomm as spiksbc
@@ -6,6 +10,8 @@ import sys
 
 
 def main():
+    """ Main method and entry point
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument("--fs", help="sampling frequency",
                         type=int)

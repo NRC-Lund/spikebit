@@ -1,11 +1,10 @@
 """
-Created on Thu Nov  9 15:47:59 2017
-
 @author: Bengt Ljungquist
 """
 import spikebit.sbcomm
 cimport numpy as np
 import numpy as np
+import spikebit.encoder as spenc
 import time
 
 cpdef randspikes(int n_ch, int win_sz, int method):
@@ -18,9 +17,15 @@ cpdef randspikes(int n_ch, int win_sz, int method):
     returns:
         the generated numpy array according to the method       
     """
-    the_data=np.random.randint(0,2**32-1,[n_ch,win_sz],dtype=np.dtype('uint32'))
-    if method==1:
-        the_data[:,0]=2**32-1 # all neurons are spiking
+    if method==2:
+        spike_times= np.random.randint(0,win_sz,size=(1,1000),dtype=np.uint32)
+        neuron_ids = np.random.randint(0,n_ch * 32,size=(1,1000),dtype=np.uint32)
+        the_data=spenc.bit_encode(spike_times,neuron_ids,2000,20)
+
+    else:
+        the_data=np.random.randint(0,2**32-1,[n_ch,win_sz],dtype=np.dtype('uint32'))
+        if method==1:
+            the_data[:,0]=2**32-1 # all neurons are spiking
     return the_data
 
 cpdef runsim(int n_ch, int sim_sz, int win_sz, int fs, str host, int port):

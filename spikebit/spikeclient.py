@@ -1,7 +1,5 @@
 """
-Created on Tue Jun 27 00:27:35 2017
-
-@author: bengt
+@author: Bengt Ljungquist
 """
 
 import spikebit.sbcomm

@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-
+"""
+@author: Bengt Ljungquist
+"""
 import numpy as np
 import time
 from mpi4py import MPI
@@ -44,12 +46,11 @@ class Client(object):
 
     def send_data(self, s_data):
         """sends data to server
-        
         args:
             s_data: windowsize x channels numpy array
         """
         if not(isinstance(s_data, numpy.ndarray)) or len(s_data.shape) != 2:
-            raise ValueError('Data should be numpy array: winsize x channels)')
+            raise ValueError('Data should be numpy array: channels x winsize)')
         if not(self.isConnected):
             raise IOError('Not connected to SpikeBit server')
         self.sock.sendall(s_data.data)  # send numpy internal memory buffer
@@ -82,8 +83,9 @@ class SpikebitTCPHandler(socketserver.StreamRequestHandler):
                     continue
                 else:
                     break_next = False
-                np_data = np.ndarray(shape=(self.server.nch, self.server.bufsz),
-                                  dtype=np.uint32, buffer=data)
+                np_data = np.ndarray(
+                    shape=(self.server.nch, self.server.bufsz),
+                    dtype=np.uint32, buffer=data)
                 self.server.dbc.write_data(np_data)
                 data = b''
                 t2 = time.clock()
@@ -133,7 +135,7 @@ class SpikebitServer(socketserver.TCPServer, spikebit.observer.Observer):
         super(request, client_address)
 
     def usershutdown(self):
-        self.dbc.f.close()
+        self.dbc.file_obj.close()
 
     def notify(self, subject, msg):
         """ called by observed subject with message msg
