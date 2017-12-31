@@ -28,15 +28,12 @@ cpdef bit_encode(np.ndarray spike_times, np.ndarray neuron_ids,
     spikes = np.ones((1, n_spikes), np.uint8).flatten()
     int_sp_times = spike_times.astype(np.uint8).flatten()
     # Use vectors to create sparse matrix
-    print("Creating matrix")
-    print(spikes) 
     spike_mat = scs.csc_matrix((spikes, (neuron_ids, int_sp_times)),
                                shape=(n_neurons, win_size), 
                                dtype=np.int8).toarray()
     spike_mat=spike_mat.astype(np.bool).astype(np.int)  
     # Pad with zeros to get a number of rows
     # divisable by 32
-    print("Starting to pad")
     x_neurons = n_neurons % 32
     if x_neurons != 0:
         to_pad = 32-x_neurons

@@ -37,7 +37,6 @@ class SBHdf(sbo.Observable):
         step_size = data.shape[1]
         data_set[:, self.file_i:(self.file_i+step_size)] = data
         self.file_i += step_size
-        # print self.file_i
         self.last_data = data
         self.notify_observers(sbo.DATA_RECEIVED)
 

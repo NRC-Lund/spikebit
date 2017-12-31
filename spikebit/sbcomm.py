@@ -62,37 +62,41 @@ class SpikebitTCPHandler(socketserver.StreamRequestHandler):
     def handle(self):
         """ method called when request received by server
         """
-        print('Handling')
+        server = self.server
+        n_ch = server.nch
+        win_size = server.bufsz
+        request = self.request
         t1 = time.clock()
         data = b''  # Init data to empty binary string
-        expect_len = self.server.nch*self.server.bufsz*4
-        # while True:
+        expect_len = n_ch * win_size * 4
+
         break_next = False
         while True:
             try:
                 while len(data) < expect_len:
-                    this_data = self.request.recv(expect_len-len(data))
+                    this_data = request.recv(expect_len-len(data))
                     if not this_data:
-                        break  # No more data received - breaking
+                        break  # No more data received
                     else:
                         data += this_data
-                if (len(data) == 0) & break_next:
-                    break
-                elif len(data) == 0:
-                    break_next = True
-                    continue
+                if (len(data) == 0):
+                    if break_next:
+                        break
+                    else:
+                        break_next = True
+                        continue
                 else:
                     break_next = False
                 np_data = np.ndarray(
-                    shape=(self.server.nch, self.server.bufsz),
+                    shape=(n_ch, win_size),
                     dtype=np.uint32, buffer=data)
-                self.server.dbc.write_data(np_data)
+                server.dbc.write_data(np_data)
                 data = b''
                 t2 = time.clock()
                 t_delta = t2 - t1
                 speed = np_data.size * 32 / (t_delta)  # Writing 32 bits
-                self.server.dbc.write_speed(speed)
-                self.server.dbc.write_time(t2)
+                server.dbc.write_speed(speed)
+                server.dbc.write_time(t2)
                 t1 = time.clock()
             except Exception as e:
                 print(e)
