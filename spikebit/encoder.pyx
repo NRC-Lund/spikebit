@@ -41,15 +41,14 @@ cpdef bit_encode(np.ndarray spike_times, np.ndarray neuron_ids,
                                constant_values=0)    
     # Calculated number of 32-bit integers nneded
     n_ints = spike_mat.shape[0] // 32
-      
     # Reshape matrix to a "bit shape" to prepare for multiplication
     spike_mat=np.reshape(spike_mat.transpose(), (win_size, n_ints,32))
-
     # create bitvector (1,2,4, ... ,2**31)
     bit32 = 2 ** np.arange(32)
-    
     # multiply matrices (spike_mat X bit32) to get bit encoding 
     bit_encoded_data = spike_mat.dot(np.transpose(bit32)).transpose()
+    # make c contiguous (needed for exposing internal buffer)
+    bit_encoded_data = np.ascontiguousarray(bit_encoded_data, dtype=np.uint32)
     return bit_encoded_data
     
     

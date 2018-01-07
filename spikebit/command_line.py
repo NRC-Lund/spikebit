@@ -29,7 +29,7 @@ def server():
     server() - spawns servers as determined by parameters
     """
     nowstr = dt.datetime.strftime(dt.datetime.now(),
-                                  "%Y-%m-%d-%H%M%S") + '.hdf5'
+                                  "%Y-%m-%d-%H%M%S") + '.h5'
     parser = argparse.ArgumentParser(description='Spawns spikebit servers')
     parser = parsecommon(parser)
     parser.add_argument("--nsys", help="number of systems",
@@ -64,6 +64,8 @@ def client():
                         default='localhost')
     parser.add_argument("--simsz", help="size of simulation",
                         type=int,  default=0)
+    parser.add_argument("--encode", help="Simulate with encoding",
+                        action="store_true")
 
     mpicomm = MPI.COMM_WORLD
     args = parser.parse_args()
@@ -71,7 +73,7 @@ def client():
     port = args.port + mpicomm.Get_rank()
     hostname = args.host
     params = {"fs": args.fs, "nch": args.nch, "bufsz": args.bufsz,
-              "simsz": args.simsz, "port": port}
+              "simsz": args.simsz, "port": port, "encode": args.encode}
     try:
         # Currently,  only simclient is implemented
         sps = spikebit.spikeclient.Simclient('localhost', hostname, params)

@@ -23,6 +23,7 @@ class Spikeclient(object):
         self.port = params["port"]
         self.simsz = params["simsz"]
         self.fs = params["fs"]
+        self.encode = params["encode"]
 
     def acqconnect(self):
         """ Connect to the specific acquisition system using its API to define
@@ -57,4 +58,4 @@ class Simclient(Spikeclient):
 
     def main(self):
         spikebit.simrun.runsim(self.nch, self.simsz, self.bufsz, self.fs,
-                               self.spikebithost, self.port)
+                               self.spikebithost, self.port, self.encode)
