@@ -30,6 +30,7 @@ For client, run: `$ spikebit-client`. For testing out multiple clients for testi
 ### Client arguments:
 * --host - server to connect to (default localhost)
 * --simsz - size of simulation, number of complete messages to send (default 100)
+* --encode - use real time encoding for simulated data (spiketrains) instead of pregenerated numpy arrays
 
 ### Server arguments:
 * --nsys - number of clients to connect to (default 1 system)
