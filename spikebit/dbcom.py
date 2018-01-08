@@ -8,7 +8,7 @@ import os.path
 
 class SBHdf(sbo.Observable):
     def __init__(self, file_name, fs, nCh, bufsz, nsys=1):
-        self.file_length = 1 * 60 * fs  # 60 s to start with
+        self.file_length = 1 * 10 * fs  # 60 s to start with
         self.file_i = 0
         self.speed_i = 0
         self.time_i = 0
